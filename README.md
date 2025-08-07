@@ -65,3 +65,101 @@ Tu tarea es crear un backend que simule este sistema de ventas con un rate limit
 ---
 **Tiempo estimado**: 3-4 horas  
 **Dificultad**: Intermedio
+
+# Fase 2: Extensión - Múltiples Choclos
+
+## Contexto
+¡Don José ha tenido una excelente cosecha! Ahora puede ser más generoso con sus clientes. Ha decidido cambiar su política de ventas: **cada cliente puede comprar hasta 10 choclos por minuto**.
+
+Tu tarea es **modificar tu backend existente** para adaptarse a este nuevo requerimiento.
+
+## Nuevos Requerimientos
+
+### Rate Limiter Actualizado
+- Cada cliente puede hacer **máximo 10 compras por minuto**
+- Una vez que el cliente haga 10 compras, debe esperar hasta el próximo minuto
+- **IMPORTANTE**: El rate limited debe seguir implementandose en DB
+
+### Funcionalidad Adicional
+- La ruta debe indicar cuántas compras le quedan al cliente en el minuto actual
+- Debe manejar compras múltiples en una sola petición (opcional)
+
+## Respuestas Esperadas
+
+### Compra Exitosa
+```json
+{
+  "mensaje": "¡Choclo comprado exitosamente!",
+  "cliente": "juan_perez",
+  "comprasRealizadas": 3,
+  "comprasRestantes": 7
+}
+```
+
+### Rate Limit Excedido
+```json
+{
+  "error": "Rate limit excedido",
+  "mens aje": "Ya compraste 10 choclos este minuto",
+  "cliente": "juan_perez", 
+  "comprasRealizadas": 10
+}
+```
+
+### Compra Múltiple (Opcional)
+Permitir especificar cantidad en la petición:
+```json
+// Request
+{
+  "cantidad": 3
+}
+
+// Response exitoso
+{
+  "mensaje": "¡3 choclos comprados exitosamente!",
+  "cliente": "juan_perez",
+  "comprasRealizadas": 5,
+  "comprasRestantes": 5
+}
+
+// Response cuando no hay suficiente cuota
+{
+  "error": "Cantidad excede el límite",
+  "mensaje": "Solo puedes comprar 2 choclos más este minuto",
+  "cliente": "juan_perez",
+  "comprasRealizadas": 8,
+  "comprasRestantes": 2
+}
+```
+
+## Consideraciones de Implementación
+
+### Manejo del Tiempo
+- Considera cómo manejar el "último minuto"
+- Piensa en la ventana deslizante vs ventana fija
+
+### Adaptabilidad del Código
+- ¿Tu código de la Fase 1 es fácil de modificar?
+- ¿Necesitas reestructurar tu rate limiter?
+- ¿Puedes hacer el límite configurable?
+
+## Criterios de Evaluación
+- **Funcionalidad**: El nuevo rate limiter funciona correctamente
+- **Base de datos**: Mantiene y mejora el uso de BD
+- **Información detallada**: Respuestas informativas sobre el estado actual
+- **Compras múltiples**: (Opcional) Manejo de cantidad en una petición
+
+## Entregables
+1. Código fuente modificado
+2. README actualizado explicando los cambios realizados
+3. Capturas de pantalla de las nuevas pruebas en Postman
+4. Breve reflexión sobre qué tuviste que cambiar de la Fase 1
+
+## Desafío Adicional (Puntos Extra)
+- Hacer el límite configurable (cantidad)
+- Implementar diferentes ventanas de tiempo (por minuto, por hora)
+- Agregar endpoint para consultar el estado actual sin comprar
+
+---
+**Tiempo estimado**: 2-3 horas (partiendo de la Fase 1)  
+**Dificultad**: Intermedio-Avanzado
